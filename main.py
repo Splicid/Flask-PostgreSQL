@@ -1,4 +1,5 @@
 import os
+import hash
 import psycopg2
 from flask import Flask, render_template
 

@@ -10,5 +10,15 @@
     <div>{% block content %} 
            <h1> {{books[0]}} </h1>
         {% endblock %} </div>
+
+        <form action="http://localhost:5000/insert" method = "post">
+            <label for="username"> Username </label>
+            <input type="text" id="username" name="username" required>
+            <label for="password"> Password </label>
+            <input type="password" id="password" name="password" required>
+            <label for="email"> Email </label>
+            <input type="text" name="email" id="email" required>
+            <input type="submit" value="submit">
+         </form>   
 </body>
 </html>

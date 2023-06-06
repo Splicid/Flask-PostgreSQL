@@ -13,11 +13,11 @@
 
         <form action="http://localhost:5000/insert" method = "post">
             <label for="username"> Username </label>
-            <input type="text" id="username" name="username" required>
+            <input minlength="5"  maxlength="15" type="text" id="username" name="username" required>
             <label for="password"> Password </label>
             <input type="password" id="password" name="password" required>
             <label for="email"> Email </label>
-            <input type="text" name="email" id="email" required>
+            <input pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" type="text" name="email" id="email" required>
             <input type="submit" value="submit">
          </form>   
 </body>

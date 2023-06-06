@@ -1,7 +1,12 @@
 import os
 import hash
 import psycopg2
+
 from flask import Flask, render_template, redirect, url_for, request
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 
 conn = psycopg2.connect(
         host="localhost",
@@ -19,6 +24,10 @@ hash.pass_encryption(data[0][2])
 
 app = Flask(__name__)
 
+#JWT setup
+app.config["JWT_SECRET_KEY"] = "password"  # Change this!
+jwt = JWTManager(app)
+
 @app.route("/")
 def index():
     cur.execute('SELECT * FROM accounts')
@@ -31,5 +40,7 @@ def insert():
     username = request.form['username']
     password = request.form['password']
     email = request.form['email']
-    #cur.execute(f'INSERT INTO accounts({username}, {password}, {email}, CURRENT_TIMESTAMP)')
+    cur.execute("INSERT INTO accounts(username, password, email, created_on) VALUES(%s, %s, %s, CURRENT_TIMESTAMP)", [username, password, email])
+    conn.commit()
+
     return f"The username is: {username}, password is {password}, email is: {email}"

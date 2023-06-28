@@ -1,12 +1,7 @@
-import os
-import hash
-import psycopg2
+from flask import Flask, render_template, redirect, url_for, request, jsonify, session
+from datetime import timedelta
+import os, psycopg2, hash
 
-from flask import Flask, render_template, redirect, url_for, request
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
 
 conn = psycopg2.connect(
         host="localhost",
@@ -18,29 +13,72 @@ conn = psycopg2.connect(
 # Open a cursor to perform database operations
 cur = conn.cursor()
 
-cur.execute('SELECT * FROM accounts')
-data = cur.fetchall()
-hash.pass_encryption(data[0][2])
-
 app = Flask(__name__)
-
-#JWT setup
-app.config["JWT_SECRET_KEY"] = "password"  # Change this!
-jwt = JWTManager(app)
+app.secret_key = "FAKE-KEY"
+app.permanent_session_lifetime = timedelta(seconds=60)
 
 @app.route("/")
 def index():
-    cur.execute('SELECT * FROM accounts')
-    books = cur.fetchall()
-    #print(books[0][2])
-    return render_template('index.html', books=books)
+    if "user" in session:
+        return redirect(url_for("protected"))
+    return render_template(("login.html"))
+
+@app.route("/login", methods=['POST'])
+def login():
+    # cur.execute('SELECT * FROM accounts')
+    # books = cur.fetchall()
+    # print(books[0][2])
+    # return render_template('index.html', books=books)
+    
+    if request.method == "POST":
+        try:
+            user = request.form["username"]
+            password = request.form['password']
+            session["user"] = user
+            cur.execute("SELECT * from accounts WHERE username = %s", [user])
+            conn.commit()
+            result = cur.fetchall()
+
+            encrypted_pass = hash.pass_encryption(password)
+            print(result[0][2])
+            decrypted_pass = hash.pass_check(result[0][2], password)
+            if decrypted_pass:
+                return redirect(url_for("protected"))
+            else:
+                return "false"
+        except Exception as err:
+            print(err)
+            return err
+        #return redirect(url_for("protected"))
+    else:
+        if "user" in session:
+            return redirect(url_for("protected"))
+        return render_template(url_for("login.html"))
 
 @app.route("/insert", methods=['POST', 'GET'])
 def insert():
-    username = request.form['username']
-    password = request.form['password']
-    email = request.form['email']
-    cur.execute("INSERT INTO accounts(username, password, email, created_on) VALUES(%s, %s, %s, CURRENT_TIMESTAMP)", [username, password, email])
-    conn.commit()
+    # email = request.form['email']
+    # hpass = hash.pass_encryption(password)
+    # cur.execute("INSERT INTO accounts(username, password, email, created_on) VALUES(%s, %s, %s, CURRENT_TIMESTAMP)", [username, hpass, email])
+    # cur.execute("SELECT * from accounts WHERE username = %s", [username])
+    # result = cur.fetchall()
+    # conn.commit()
+    # cur.execute("ROLLBACK")
+    # conn.commit()
+    # return f"The username is: {username}, password is {hpass}, email is: {email}"
 
-    return f"The username is: {username}, password is {password}, email is: {email}"
+    # token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30)}, app.config['SECRET_KEY'])
+    return "failed"
+
+@app.route("/protected", methods=["GET"])
+def protected():
+    if "user" in session:
+        user = session["user"]
+        return f"{user} private instance"
+    else:
+        return redirect(url_for("/"))
+    
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("/"))

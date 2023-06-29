@@ -21,7 +21,7 @@ app.permanent_session_lifetime = timedelta(seconds=60)
 def index():
     if "user" in session:
         return redirect(url_for("protected"))
-    return render_template(("login.html"))
+    return render_template(("login.html"), show_error=True)
 
 @app.route("/login", methods=['POST'])
 def login():
@@ -38,16 +38,19 @@ def login():
             cur.execute("SELECT * from accounts WHERE username = %s", [user])
             conn.commit()
             result = cur.fetchall()
-
+            if result == None:
+                print("Empty")
+            else:
+                print(result)
             encrypted_pass = hash.pass_encryption(password)
-            print(result[0][2])
+            #print(result[0][2])
             decrypted_pass = hash.pass_check(result[0][2], password)
             if decrypted_pass:
                 return redirect(url_for("protected"))
             else:
-                return "false"
+                print(decrypted_pass)
+                return render_template("login.html", show_error=decrypted_pass)
         except Exception as err:
-            print(err)
             return err
         #return redirect(url_for("protected"))
     else:
@@ -76,9 +79,9 @@ def protected():
         user = session["user"]
         return f"{user} private instance"
     else:
-        return redirect(url_for("/"))
+        return redirect(url_for("index"))
     
 @app.route("/logout")
 def logout():
     session.pop("user", None)
-    return redirect(url_for("/"))
+    return redirect(url_for("index"))

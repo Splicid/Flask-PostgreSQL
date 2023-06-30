@@ -6,14 +6,14 @@ import os, psycopg2, hash
 conn = psycopg2.connect(
         host="localhost",
         database="UserInfo",
-        user=os.environ['DB_USERNAME'],
-        password=os.environ['DB_PASSWORD']
+        user=os.environ["DB_USERNAME"],
+        password=os.environ["DB_PASSWORD"]
 )
 
 # Open a cursor to perform database operations
 cur = conn.cursor()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="staticFiles")
 app.secret_key = "FAKE-KEY"
 app.permanent_session_lifetime = timedelta(seconds=60)
 
@@ -31,27 +31,38 @@ def login():
     # return render_template('index.html', books=books)
     
     if request.method == "POST":
-        try:
-            user = request.form["username"]
-            password = request.form['password']
+        #Gets user and pass from login.html form
+        user = request.form["username"]
+        password = request.form['password']
+
+        #Checks if user exists in db
+        cur.execute("SELECT * from accounts WHERE username = %s", [user])
+        conn.commit()
+        result = cur.fetchone()
+        #Checks if password matches 
+        if result == None:
+            return "user not found"
+        else:
+            decrypted_pass = hash.pass_check(result[2], password)
+
+        #Checks if result is empty if not add user info to session
+        if result != "" and decrypted_pass == True:
             session["user"] = user
-            cur.execute("SELECT * from accounts WHERE username = %s", [user])
-            conn.commit()
-            result = cur.fetchall()
-            if result == None:
-                print("Empty")
-            else:
-                print(result)
-            encrypted_pass = hash.pass_encryption(password)
-            #print(result[0][2])
-            decrypted_pass = hash.pass_check(result[0][2], password)
-            if decrypted_pass:
-                return redirect(url_for("protected"))
-            else:
-                print(decrypted_pass)
-                return render_template("login.html", show_error=decrypted_pass)
-        except Exception as err:
-            return err
+            return redirect(url_for("protected"))
+        elif result == None:
+            # add in user not found create account
+            print("Empty")
+        else:
+            return render_template("login.html", show_error=decrypted_pass)
+        
+
+        #encrypted_pass = hash.pass_encryption(password)
+        #print(result[0][2])
+        # if decrypted_pass:
+        #     return redirect(url_for("protected"))
+        # else:
+        #     print(decrypted_pass)
+        #     return render_template("login.html", show_error=decrypted_pass)
         #return redirect(url_for("protected"))
     else:
         if "user" in session:

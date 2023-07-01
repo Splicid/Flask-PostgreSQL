@@ -10,18 +10,21 @@
 <body>
 
     <div class="container">
-        <form action="http://localhost:5000/login" method = "post">
-            <label for="username"> Username </label>
-            <input minlength="5"  maxlength="15" type="text" id="username" name="username" required>
-            <label for="password"> Password </label>
-            <input type="password" id="password" name="password" required>
-            <input type="submit" value="submit">
-         </form>   
-        {% if show_error %}
-            <p> Sign in </p>
-        {% else %}
-            <p> Wrong username or password. Try again or click recover account. </p>
-        {% endif %}
+        <div class="inner-container">
+            <form action="http://localhost:5000/login" method = "post">
+                <h1>Sign In</h1>
+                <label for="username"> Username </label>
+                <input minlength="5"  maxlength="15" type="text" id="username" name="username" required>
+                <label for="password"> Password </label>
+                <input type="password" id="password" name="password" required>
+                <input type="submit" value="submit">
+             </form>   
+            {% if show_error %}
+                <p> </p>
+            {% else %}
+                <p> Wrong username or password. Try again or click recover account. </p>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>

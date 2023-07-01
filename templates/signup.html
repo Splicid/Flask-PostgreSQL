@@ -5,18 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/staticFiles/main.css">
-    <title>Login Page</title>
+    <title>Sign Up Page</title>
 </head>
 <body>
 
     <div class="container">
         <div class="inner-container">
-            <form action="http://localhost:5000/login" method = "post">
-                <h1>Sign In</h1>
+            <form action="http://localhost:5000/insert" method="post">
+                <h1>Sign up</h1>
                 <label for="username"> Username </label>
                 <input minlength="5"  maxlength="15" type="text" id="username" name="username" required>
                 <label for="password"> Password </label>
                 <input type="password" id="password" name="password" required>
+                <label for="email"> Email </label>
+                <input type="email" id="email" name="email" required>
                 <input type="submit" value="submit">
              </form>   
             {% if show_error %}
@@ -24,7 +26,6 @@
             {% else %}
                 <p> Wrong username or password. Try again or click recover account. </p>
             {% endif %}
-            <h4>Sign up <a href="http://localhost:5000/signup">here</a></h4>
         </div>
     </div>
 </body>

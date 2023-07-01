@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, jsonify, session
 from datetime import timedelta
-import os, psycopg2, hash
+import os, psycopg2, hash, requests
 
 
 conn = psycopg2.connect(
@@ -15,7 +15,7 @@ cur = conn.cursor()
 
 app = Flask(__name__, static_folder="staticFiles")
 app.secret_key = "FAKE-KEY"
-app.permanent_session_lifetime = timedelta(seconds=60)
+app.permanent_session_lifetime = timedelta(minutes=10)
 
 @app.route("/")
 def index():
@@ -56,15 +56,6 @@ def login():
         else:
             return render_template("login.html", show_error=decrypted_pass)
         
-
-        #encrypted_pass = hash.pass_encryption(password)
-        #print(result[0][2])
-        # if decrypted_pass:
-        #     return redirect(url_for("protected"))
-        # else:
-        #     print(decrypted_pass)
-        #     return render_template("login.html", show_error=decrypted_pass)
-        #return redirect(url_for("protected"))
     else:
         if "user" in session:
             return redirect(url_for("protected"))
@@ -72,27 +63,32 @@ def login():
 
 @app.route("/insert", methods=['POST', 'GET'])
 def insert():
-    # email = request.form['email']
-    # hpass = hash.pass_encryption(password)
-    # cur.execute("INSERT INTO accounts(username, password, email, created_on) VALUES(%s, %s, %s, CURRENT_TIMESTAMP)", [username, hpass, email])
-    # cur.execute("SELECT * from accounts WHERE username = %s", [username])
-    # result = cur.fetchall()
-    # conn.commit()
-    # cur.execute("ROLLBACK")
-    # conn.commit()
-    # return f"The username is: {username}, password is {hpass}, email is: {email}"
-
-    # token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30)}, app.config['SECRET_KEY'])
-    return "failed"
+    try:
+        user = request.form["username"]
+        password = request.form['password']
+        email = request.form['email']
+        hpass = hash.pass_encryption(password)
+        cur.execute("INSERT INTO accounts(username, password, email, created_on) VALUES(%s, %s, %s, CURRENT_TIMESTAMP)", [user, hpass, email])
+        conn.commit()
+    except:
+        return "Failed"
+    finally:
+        return render_template("login.html")
 
 @app.route("/protected", methods=["GET"])
 def protected():
     if "user" in session:
         user = session["user"]
-        return f"{user} private instance"
+        response = requests.get("https://jsonplaceholder.typicode.com/posts")
+        data = response.json()
+        return render_template("data.html", data=data)
     else:
         return redirect(url_for("index"))
     
+@app.route("/signup")
+def signup():
+    return render_template("signup.html")
+
 @app.route("/logout")
 def logout():
     session.pop("user", None)

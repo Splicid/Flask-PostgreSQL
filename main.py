@@ -20,7 +20,6 @@ app.permanent_session_lifetime = timedelta(minutes=10)
 @app.route("/")
 def index():
     if "user" in session:
-        print(session)
         return redirect(url_for("protected"))
     return render_template(("login.html"), show_error=True)
 
@@ -87,6 +86,8 @@ def protected():
     
 @app.route("/signup")
 def signup():
+    if "user" in session:
+        return redirect(url_for("index"))
     return render_template("signup.html")
 
 @app.route("/logout")

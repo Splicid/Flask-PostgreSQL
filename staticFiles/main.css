@@ -14,3 +14,11 @@
     flex-direction: column;
 }
 
+/* Data html page css */
+
+.data-container{
+    border: solid black 20px;
+    padding: 20px;
+}
+
+

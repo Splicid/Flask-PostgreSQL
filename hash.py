@@ -1,4 +1,4 @@
-import os, pprint
+import os
 from passlib.hash import pbkdf2_sha256
 
 env_var = os.environ
@@ -10,5 +10,4 @@ def pass_encryption(db_pass):
     return password 
 
 def pass_check(db_check, user_check):
-    #db_encrypt = pbkdf2_sha256.hash(db_check)
     return pbkdf2_sha256.verify(user_check, db_check)

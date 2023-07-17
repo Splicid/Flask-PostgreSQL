@@ -37,12 +37,15 @@
           </div>
         </ul>
       </nav>
-
+      <section class="main-content">
+        <div class="main"></div>
+      </section>
+      
       <div class="grid-container">
         {% for i in data %}
         <div class="grid-item">
           <h2> {{i['title']}} </h2>
-          <h4> {{i['description']}} </h4>
+          <h4 class="description"> {{i['description']}} </h4>
           <div class="bottom"> Buy </div>
         </div>
         {%endfor%}

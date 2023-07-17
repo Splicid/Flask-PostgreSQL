@@ -168,22 +168,14 @@ input[type=checkbox]:checked ~ .menu {
 
 /* Container Test */
 
-.grid-container{
+/* .grid-container{
     display: grid;
     column-gap: 50px;
-    /* align-items: center; */
+    align-items: center;
     justify-content: center;
     padding: 30px;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-}
-.grid-item{
-    background-color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    font-size: 30px;
-    text-align: center;
-    margin-bottom: 20px;
-}
+} */
 
 .footer-container{
     height: 5rem;
@@ -192,7 +184,55 @@ input[type=checkbox]:checked ~ .menu {
     border-top: solid black 0.1rem;
 }
 
+.grid-item{
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    /* padding-left: 20px;
+    padding-right: 20px; */
+    padding-top: 20px;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .bottom{
-    position: relative;
-    left: 1;
+    color: red;
+    border-top: solid black 1px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+.description{
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+@media(min-width: 320px){ 
+    .grid-container{
+        display: grid;
+        column-gap: 50px;
+        /* align-items: center; */
+        justify-content: center;
+        padding: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    }
+}
+
+@media(max-width: 350px){
+    .grid-container{
+        display: grid;
+        column-gap: 50px;
+        /* align-items: center; */
+        justify-content: center;
+        padding: 30px;
+        /* grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); */
+    }
+}
+
+.main-content{
+    height: 85vh;
+    border: solid #000000 1px;
 }

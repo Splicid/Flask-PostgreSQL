@@ -106,4 +106,4 @@ def logout():
     return redirect(url_for("index"))
 
 
-app.run(debug=True, port=5000)
+app.run(debug=True, port=6000)

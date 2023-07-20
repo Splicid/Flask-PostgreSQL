@@ -75,6 +75,7 @@ def insert():
         hpass = hash.pass_encryption(password)
         cur.execute("INSERT INTO account(username, passhash, email, created_on) VALUES(%s, %s, %s, CURRENT_TIMESTAMP)", [user, hpass, email])
         conn.commit()
+        conn.close()
     except:
         return "Failed"
     finally:

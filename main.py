@@ -4,8 +4,8 @@ import os, psycopg2, hash, requests
 
 
 conn = psycopg2.connect(
-        host="localhost",
-        database="postgres",
+        host=os.environ["DB_HOST"],
+        database=os.environ["DB_DATABASE"],
         user=os.environ["DB_USERNAME"],
         password=os.environ["DB_PASSWORD"]
 )
@@ -43,7 +43,7 @@ def login():
         result = cur.fetchone()
         print(result)
 
-        #Checks if password matches 
+        #Checks if password matches [3]
         if result == None:
             return "user not found"
         else:

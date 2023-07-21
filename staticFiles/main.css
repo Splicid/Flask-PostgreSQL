@@ -236,3 +236,16 @@ input[type=checkbox]:checked ~ .menu {
     height: 85vh;
     border: solid #000000 1px;
 }
+
+.parent {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.div1 { grid-area: 1 / 1 / 3 / 3; }
+.div2 { grid-area: 3 / 1 / 6 / 5; }
+.div3 { grid-area: 1 / 3 / 3 / 6; }
+.div4 { grid-area: 3 / 5 / 6 / 6; }

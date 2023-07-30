@@ -41,14 +41,12 @@ def login():
         cur.execute("SELECT * from account WHERE username = %s", [user])
         conn.commit()
         result = cur.fetchone()
-        print(result)
 
         #Checks if password matches [3]
         if result == None:
             return "user not found"
         else:
             decrypted_pass = hash.pass_check(result[2].strip(), password)
-            print(result[2])
 
         #Checks if result is empty if not add user info to session
         if result != "" and decrypted_pass == True:
@@ -88,7 +86,6 @@ def protected():
         user = session["user"]
         response = requests.get("https://dummyjson.com/products/")
         data = response.json()
-        print(data["products"])
         return render_template("data.html", data=data["products"])
     else:
         return redirect(url_for("index"))
